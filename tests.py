@@ -1,7 +1,7 @@
 import unittest
 import prettytable
 
-class BlackBoxTest(unittest.TestCase):
+class ValidationTests(unittest.TestCase):
 
     def setUp(self):
         self.pt = prettytable.PrettyTable()
@@ -50,7 +50,7 @@ class BlackBoxTest(unittest.TestCase):
             self.pt._validate_valign('m')
             self.pt._validate_valign('b')
         except Exception:
-            self.fail('_validate_align raised an Exception for valid input')
+            self.fail('_validate_valign raised an Exception for valid input')
 
         self.assertRaises(Exception, self.pt._validate_valign, "top")
         self.assertRaises(Exception, self.pt._validate_valign, "middle")
@@ -64,6 +64,30 @@ class BlackBoxTest(unittest.TestCase):
         self.assertRaises(Exception, self.pt._validate_valign, 0)
         self.assertRaises(Exception, self.pt._validate_valign, 1)
         self.assertRaises(Exception, self.pt._validate_valign, 2)
+
+    def test_validate_nonnegative_int(self):
+        try:
+            self.pt._validate_nonnegative_int('a varibale', 0)
+            self.pt._validate_nonnegative_int('a varibale', 1)
+            self.pt._validate_nonnegative_int('a varibale', 2)
+            self.pt._validate_nonnegative_int('a varibale', 10000000)
+            self.pt._validate_nonnegative_int('a varibale', 99999999999)
+            self.pt._validate_nonnegative_int('a varibale', 0.1)
+            self.pt._validate_nonnegative_int('a varibale', 0.000000001)
+        except Exception:
+            self.fail('_validate_nonnegative_int raised an Exception for valid input')
+
+        self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable", "adsf")
+        self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable", "")
+        self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable", -1)
+        self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable", -10000000)
+        self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable")
+        self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable", "-1")
+        self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable", "-2")
+
+        # This will fail, because int(value) will round towards zero (i.e. it is rounded to 0, and that is nonnegative)
+        # This is a potential flaw in the implementation. Not sure if it is relevant in the usage context of the validation function
+        # self.assertRaises(Exception, self.pt._validate_nonnegative_int, "a variable", -0.1)
 
 
 if __name__ == "__main__":
