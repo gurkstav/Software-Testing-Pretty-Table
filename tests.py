@@ -146,6 +146,123 @@ class PublicInterfaceTest(unittest.TestCase):
         except Exception as e:
             self.fail('del_row raised an Exception for valid input')
 
+    def test_get_html_string(self):
+        expected_html_simple = u'<table>\n\
+    <tr>\n\
+        <th>City name</th>\n\
+        <th>Area</th>\n\
+        <th>Population</th>\n\
+        <th>Annual Rainfall</th>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Adelaide</td>\n\
+        <td>1295</td>\n\
+        <td>1158259</td>\n\
+        <td>600.5</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Brisbane</td>\n\
+        <td>5905</td>\n\
+        <td>1857594</td>\n\
+        <td>1146.4</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Darwin</td>\n\
+        <td>112</td>\n\
+        <td>120900</td>\n\
+        <td>1714.7</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Hobart</td>\n\
+        <td>1357</td>\n\
+        <td>205556</td>\n\
+        <td>619.5</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Sydney</td>\n\
+        <td>2058</td>\n\
+        <td>4336374</td>\n\
+        <td>1214.8</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Melbourne</td>\n\
+        <td>1566</td>\n\
+        <td>3806092</td>\n\
+        <td>646.9</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Perth</td>\n\
+        <td>5386</td>\n\
+        <td>1554769</td>\n\
+        <td>869.4</td>\n\
+    </tr>\n\
+</table>'
+
+        expected_html_formatted = u'<table frame="box" rules="cols">\n\
+    <tr>\n\
+        <th style="padding-left: 1em; padding-right: 1em; text-align: center">City name</th>\n\
+        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Area</th>\n\
+        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Population</th>\n\
+        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Annual Rainfall</th>\n\
+    </tr>\n\
+    <tr>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">Adelaide</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1295</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1158259</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">600.5</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">Brisbane</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">5905</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1857594</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1146.4</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">Darwin</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">112</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">120900</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1714.7</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">Hobart</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1357</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">205556</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">619.5</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">Sydney</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">2058</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">4336374</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1214.8</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">Melbourne</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1566</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">3806092</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">646.9</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">Perth</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">5386</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">1554769</td>\n\
+        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">869.4</td>\n\
+    </tr>\n\
+</table>'
+
+        self.table.add_row(["Adelaide", 1295, 1158259, 600.5])
+        self.table.add_row(["Brisbane", 5905, 1857594, 1146.4])
+        self.table.add_row(["Darwin", 112, 120900, 1714.7])
+        self.table.add_row(["Hobart", 1357, 205556, 619.5])
+        self.table.add_row(["Sydney", 2058, 4336374, 1214.8])
+        self.table.add_row(["Melbourne", 1566, 3806092, 646.9])
+        self.table.add_row(["Perth", 5386, 1554769, 869.4])
+
+        self.table.format = False
+        self.assertEqual(self.table.get_html_string(), expected_html_simple)
+
+        self.table.format = True
+        self.assertEqual(self.table.get_html_string(), expected_html_formatted)
+
 
 if __name__ == "__main__":
     unittest.main()
