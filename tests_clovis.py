@@ -52,7 +52,7 @@ class TestPrettyTable(unittest.TestCase):
 		self.assertTrue(not table._widths)#true if list is empty
 
 	def test_validate_attributes(self):
-		
+
 		
 		dict = {'Name': 'Zara', 'Age': 7, 'Class': 'First'}
 		try:
@@ -61,7 +61,7 @@ class TestPrettyTable(unittest.TestCase):
 			self.pt._validate_header_style(None)
 		except Exception:
 			self.fail('_validate_header_style raised an Exception for valid input')
-		
+
 		self.assertRaises(Exception, self.pt._validate_attributes,"a variable", "aa")
 		self.assertRaises(Exception, self.pt._validate_attributes,"a variable", "")
 		self.assertRaises(Exception, self.pt._validate_attributes,"a variable")
