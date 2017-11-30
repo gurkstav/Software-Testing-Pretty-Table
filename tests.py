@@ -1,5 +1,6 @@
 import unittest
 import prettytable
+import StringIO
 
 class ValidationTests(unittest.TestCase):
 
@@ -262,6 +263,37 @@ class PublicInterfaceTest(unittest.TestCase):
 
         self.table.format = True
         self.assertEqual(self.table.get_html_string(), expected_html_formatted)
+
+    def test_from_csv(self):
+        csv_string = """City name, Area , Population , Annual Rainfall
+        Sydney, 2058 ,  4336374   ,      1214.8
+        Melbourne, 1566 ,  3806092   ,       646.9
+        Brisbane, 5905 ,  1857594   ,      1146.4
+        Perth, 5386 ,  1554769   ,       869.4
+        Adelaide, 1295 ,  1158259   ,       600.5
+        Hobart, 1357 ,   205556   ,       619.5
+        Darwin, 112 ,   120900   ,      1714.7"""
+
+        csv_fp = StringIO.StringIO(csv_string)
+        table_from_csv = prettytable.from_csv(csv_fp)
+
+        self.table.add_row(["Sydney", 2058, 4336374, 1214.8])
+        self.table.add_row(["Melbourne", 1566, 3806092, 646.9])
+        self.table.add_row(["Brisbane", 5905, 1857594, 1146.4])
+        self.table.add_row(["Perth", 5386, 1554769, 869.4])
+        self.table.add_row(["Adelaide", 1295, 1158259, 600.5])
+        self.table.add_row(["Hobart", 1357, 205556, 619.5])
+        self.table.add_row(["Darwin", 112, 120900, 1714.7])
+
+        self.assertEqual(len(table_from_csv._rows), 7)
+
+        # This does not work as from_csv will import all values as string
+        # while they can be represented as numbers when creating the rows
+        # normally with add_row
+        # self.assertEqual(table_from_csv._rows, self.table._rows)
+
+        # Instead, compare for equality of the resulting table prints
+        self.assertEqual(self.table.get_string(), table_from_csv.get_string())
 
 
 if __name__ == "__main__":
