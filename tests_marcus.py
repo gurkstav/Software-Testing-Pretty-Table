@@ -103,6 +103,33 @@ class ValidationTests(unittest.TestCase):
         # self.assertRaises(Exception, self.pt._validate_vrules, "a rule", True)
 
 
+class InterfaceFunctions(unittest.TestCase):
+
+    def setUp(self):
+        self.table = prettytable.PrettyTable()
+        self.table.field_names = ["City name", "Area", "Population", "Annual Rainfall"]
+        self.table.add_row(["Adelaide", 1295, 1158259, 600.5])
+
+    def test_get_string_default(self):
+        #Using default options
+        self.assertEqual(self.table.get_string().strip(), """+-----------+------+------------+-----------------+
+| City name | Area | Population | Annual Rainfall |
++-----------+------+------------+-----------------+
+|  Adelaide | 1295 |  1158259   |      600.5      |
++-----------+------+------------+-----------------+
+""".strip())
+
+    def test_get_string_lines(self):
+        # Check that lines are equal length
+        self.table.add_row(["PerthTogetherWIthSydney", 100000, 123048223, 23])
+        table = self.table.get_string()
+        lines = table.split("\n")
+        lineLengths = [len(line) for line in lines]
+        lineLengths = set(lineLengths)
+        self.assertEqual(len(lineLengths), 1)
+
+        # Check that no empty lines exist
+        self.assertTrue("" not in lines)
 
 
 if __name__ == "__main__":
