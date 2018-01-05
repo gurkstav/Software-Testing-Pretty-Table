@@ -29,59 +29,59 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = "0.7.2"
+__version__ = "0.7.2"  # pragma: no cover
 
-import copy
-import csv
-import random
-import re
-import sys
-import textwrap
-import itertools
-import unicodedata
+import copy  # pragma: no cover
+import csv  # pragma: no cover
+import random  # pragma: no cover
+import re  # pragma: no cover
+import sys  # pragma: no cover
+import textwrap  # pragma: no cover
+import itertools  # pragma: no cover
+import unicodedata  # pragma: no cover
 
-py3k = sys.version_info[0] >= 3
-if py3k:
+py3k = sys.version_info[0] >= 3  # pragma: no cover
+if py3k:  # pragma: no cover
     unicode = str
     basestring = str
     itermap = map
     iterzip = zip
     uni_chr = chr
     from html.parser import HTMLParser
-else: 
+else:  # pragma: no cover
     itermap = itertools.imap
     iterzip = itertools.izip
     uni_chr = unichr
     from HTMLParser import HTMLParser
 
-if py3k and sys.version_info[1] >= 2:
+if py3k and sys.version_info[1] >= 2:  # pragma: no cover
     from html import escape
-else:
+else:  # pragma: no cover
     from cgi import escape
 
 # hrule styles
-FRAME = 0
-ALL   = 1
-NONE  = 2
-HEADER = 3
+FRAME = 0 # pragma: no cover
+ALL   = 1 # pragma: no cover
+NONE  = 2 # pragma: no cover
+HEADER = 3 # pragma: no cover
 
 # Table styles
-DEFAULT = 10
-MSWORD_FRIENDLY = 11
-PLAIN_COLUMNS = 12
-RANDOM = 20
+DEFAULT = 10 # pragma: no cover
+MSWORD_FRIENDLY = 11 # pragma: no cover
+PLAIN_COLUMNS = 12 # pragma: no cover
+RANDOM = 20 # pragma: no cover
 
-_re = re.compile("\033\[[0-9;]*m")
+_re = re.compile("\033\[[0-9;]*m")  # pragma: no cover
 
-def _get_size(text):
+def _get_size(text): # pragma: no cover
     lines = text.split("\n")
     height = len(lines)
     width = max([_str_block_width(line) for line in lines])
     return (width, height)
         
-class PrettyTable(object):
+class PrettyTable(object): 
 
-    def __init__(self, field_names=None, **kwargs):
+    def __init__(self, field_names=None, **kwargs): # pragma: no cover
 
         """Return a new PrettyTable instance
 
@@ -174,14 +174,14 @@ class PrettyTable(object):
         self._xhtml = kwargs["xhtml"] or False
         self._attributes = kwargs["attributes"] or {}
    
-    def _unicode(self, value):
+    def _unicode(self, value): # pragma: no cover
         if not isinstance(value, basestring):
             value = str(value)
         if not isinstance(value, unicode):
             value = unicode(value, self.encoding, "strict")
         return value
 
-    def _justify(self, text, width, align):
+    def _justify(self, text, width, align): # pragma: no cover
         excess = width - _str_block_width(text)
         if align == "l":
             return text + excess * " "
@@ -202,7 +202,7 @@ class PrettyTable(object):
                 # Equal padding on either side
                 return (excess//2)*" " + text + (excess//2)*" "
 
-    def __getattr__(self, name):
+    def __getattr__(self, name): # pragma: no cover
 
         if name == "rowcount":
             return len(self._rows)
@@ -216,7 +216,7 @@ class PrettyTable(object):
         else:
             raise AttributeError(name)
  
-    def __getitem__(self, index):
+    def __getitem__(self, index): # pragma: no cover
 
         new = PrettyTable()
         new.field_names = self.field_names
@@ -232,14 +232,14 @@ class PrettyTable(object):
             raise Exception("Index %s is invalid, must be an integer or slice" % str(index))
         return new
 
-    if py3k:
+    if py3k: # pragma: no cover
         def __str__(self):
            return self.__unicode__()
-    else:
+    else:  # pragma: no cover
         def __str__(self):
            return self.__unicode__().encode(self.encoding)
 
-    def __unicode__(self):
+    def __unicode__(self):  # pragma: no cover
         return self.get_string()
 
     ##############################
@@ -253,7 +253,7 @@ class PrettyTable(object):
     # Firstly, in the property setters defined in the ATTRIBUTE MANAGMENT section.
     # Secondly, in the _get_options method, where keyword arguments are mixed with persistent settings
 
-    def _validate_option(self, option, val):
+    def _validate_option(self, option, val): # pragma: no cover
         if option in ("field_names"):
             self._validate_field_names(val)
         elif option in ("start", "end", "max_width", "padding_width", "left_padding_width", "right_padding_width", "format"):
@@ -283,7 +283,7 @@ class PrettyTable(object):
         else:
             raise Exception("Unrecognised option: %s!" % option)
 
-    def _validate_field_names(self, val):
+    def _validate_field_names(self, val): # pragma: no cover
         # Check for appropriate length
         if self._field_names:
             try:
@@ -301,37 +301,37 @@ class PrettyTable(object):
         except AssertionError:
             raise Exception("Field names must be unique!")
 
-    def _validate_header_style(self, val):
+    def _validate_header_style(self, val): # pragma: no cover
         try:
             assert val in ("cap", "title", "upper", "lower", None)
         except AssertionError:
             raise Exception("Invalid header style, use cap, title, upper, lower or None!")
 
-    def _validate_align(self, val):
+    def _validate_align(self, val): # pragma: no cover
         try:
             assert val in ["l","c","r"]
         except AssertionError:
             raise Exception("Alignment %s is invalid, use l, c or r!" % val)
 
-    def _validate_valign(self, val):
+    def _validate_valign(self, val): # pragma: no cover
         try:
             assert val in ["t","m","b",None]
         except AssertionError:
             raise Exception("Alignment %s is invalid, use t, m, b or None!" % val)
 
-    def _validate_nonnegative_int(self, name, val):
+    def _validate_nonnegative_int(self, name, val): # pragma: no cover
         try:
             assert int(val) >= 0
         except AssertionError:
             raise Exception("Invalid value for %s: %s!" % (name, self._unicode(val)))
 
-    def _validate_true_or_false(self, name, val):
+    def _validate_true_or_false(self, name, val): # pragma: no cover
         try:
             assert val in (True, False)
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be True or False." % name)
 
-    def _validate_int_format(self, name, val):
+    def _validate_int_format(self, name, val): # pragma: no cover
         if val == "":
             return
         try:
@@ -340,7 +340,7 @@ class PrettyTable(object):
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be an integer format string." % name)
 
-    def _validate_float_format(self, name, val):
+    def _validate_float_format(self, name, val): # pragma: no cover
         if val == "":
             return
         try:
@@ -353,44 +353,44 @@ class PrettyTable(object):
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be a float format string." % name)
 
-    def _validate_function(self, name, val):
+    def _validate_function(self, name, val): # pragma: no cover
         try:
             assert hasattr(val, "__call__")
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be a function." % name)
 
-    def _validate_hrules(self, name, val):
+    def _validate_hrules(self, name, val): # pragma: no cover
         try:
             assert val in (ALL, FRAME, HEADER, NONE)
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be ALL, FRAME, HEADER or NONE." % name)
 
-    def _validate_vrules(self, name, val):
+    def _validate_vrules(self, name, val): # pragma: no cover
         try:
             assert val in (ALL, FRAME, NONE)
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be ALL, FRAME, or NONE." % name)
 
-    def _validate_field_name(self, name, val):
+    def _validate_field_name(self, name, val): # pragma: no cover
         try:
             assert (val in self._field_names) or (val is None)
         except AssertionError:
             raise Exception("Invalid field name: %s!" % val)
 
-    def _validate_all_field_names(self, name, val):
+    def _validate_all_field_names(self, name, val): # pragma: no cover
         try:
             for x in val:
                 self._validate_field_name(name, x)
         except AssertionError:
             raise Exception("fields must be a sequence of field names!")
 
-    def _validate_single_char(self, name, val):
+    def _validate_single_char(self, name, val): # pragma: no cover
         try:
             assert _str_block_width(val) == 1
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be a string of length 1." % name)
 
-    def _validate_attributes(self, name, val):
+    def _validate_attributes(self, name, val): # pragma: no cover
         try:
             assert isinstance(val, dict)
         except AssertionError:
@@ -400,14 +400,14 @@ class PrettyTable(object):
     # ATTRIBUTE MANAGEMENT       #
     ##############################
 
-    def _get_field_names(self):
+    def _get_field_names(self): # pragma: no cover
         return self._field_names
         """The names of the fields
 
         Arguments:
 
         fields - list or tuple of field names"""
-    def _set_field_names(self, val):
+    def _set_field_names(self, val): # pragma: no cover
         val = [self._unicode(x) for x in val]
         self._validate_option("field_names", val)
         if self._field_names:
@@ -431,45 +431,45 @@ class PrettyTable(object):
         else:
             for field in self._field_names:
                 self._valign[field] = "t"
-    field_names = property(_get_field_names, _set_field_names)
+    field_names = property(_get_field_names, _set_field_names) # pragma: no cover
 
-    def _get_align(self):
+    def _get_align(self): # pragma: no cover
         return self._align
-    def _set_align(self, val):
+    def _set_align(self, val): # pragma: no cover
         self._validate_align(val)
         for field in self._field_names:
             self._align[field] = val
-    align = property(_get_align, _set_align)
+    align = property(_get_align, _set_align)  # pragma: no cover
 
-    def _get_valign(self):
+    def _get_valign(self): # pragma: no cover
         return self._valign
-    def _set_valign(self, val):
+    def _set_valign(self, val): # pragma: no cover
         self._validate_valign(val)
         for field in self._field_names:
             self._valign[field] = val
-    valign = property(_get_valign, _set_valign)
+    valign = property(_get_valign, _set_valign)  # pragma: no cover
 
-    def _get_max_width(self):
+    def _get_max_width(self): # pragma: no cover
         return self._max_width
-    def _set_max_width(self, val):
+    def _set_max_width(self, val): # pragma: no cover
         self._validate_option("max_width", val)
         for field in self._field_names:
             self._max_width[field] = val
-    max_width = property(_get_max_width, _set_max_width)
+    max_width = property(_get_max_width, _set_max_width)  # pragma: no cover
     
-    def _get_fields(self):
+    def _get_fields(self): # pragma: no cover
         """List or tuple of field names to include in displays
 
         Arguments:
 
         fields - list or tuple of field names to include in displays"""
         return self._fields
-    def _set_fields(self, val):
+    def _set_fields(self, val): # pragma: no cover
         self._validate_option("fields", val)
         self._fields = val
-    fields = property(_get_fields, _set_fields)
+    fields = property(_get_fields, _set_fields)  # pragma: no cover
 
-    def _get_start(self):
+    def _get_start(self): # pragma: no cover
         """Start index of the range of rows to print
 
         Arguments:
@@ -477,259 +477,259 @@ class PrettyTable(object):
         start - index of first data row to include in output"""
         return self._start
 
-    def _set_start(self, val):
+    def _set_start(self, val): # pragma: no cover
         self._validate_option("start", val)
         self._start = val
-    start = property(_get_start, _set_start)
+    start = property(_get_start, _set_start)  # pragma: no cover
 
-    def _get_end(self):
+    def _get_end(self): # pragma: no cover
         """End index of the range of rows to print
 
         Arguments:
 
         end - index of last data row to include in output PLUS ONE (list slice style)"""
         return self._end
-    def _set_end(self, val):
+    def _set_end(self, val): # pragma: no cover
         self._validate_option("end", val)
         self._end = val
-    end = property(_get_end, _set_end)
+    end = property(_get_end, _set_end)  # pragma: no cover
 
-    def _get_sortby(self):
+    def _get_sortby(self): # pragma: no cover
         """Name of field by which to sort rows
 
         Arguments:
 
         sortby - field name to sort by"""
         return self._sortby
-    def _set_sortby(self, val):
+    def _set_sortby(self, val): # pragma: no cover
         self._validate_option("sortby", val)
         self._sortby = val
-    sortby = property(_get_sortby, _set_sortby)
+    sortby = property(_get_sortby, _set_sortby) # pragma: no cover
 
-    def _get_reversesort(self):
+    def _get_reversesort(self): # pragma: no cover
         """Controls direction of sorting (ascending vs descending)
 
         Arguments:
 
         reveresort - set to True to sort by descending order, or False to sort by ascending order"""
         return self._reversesort
-    def _set_reversesort(self, val):
+    def _set_reversesort(self, val): # pragma: no cover
         self._validate_option("reversesort", val)
         self._reversesort = val
-    reversesort = property(_get_reversesort, _set_reversesort)
+    reversesort = property(_get_reversesort, _set_reversesort) # pragma: no cover
 
-    def _get_sort_key(self):
+    def _get_sort_key(self): # pragma: no cover
         """Sorting key function, applied to data points before sorting
 
         Arguments:
 
         sort_key - a function which takes one argument and returns something to be sorted"""
         return self._sort_key
-    def _set_sort_key(self, val):
+    def _set_sort_key(self, val): # pragma: no cover
         self._validate_option("sort_key", val)
         self._sort_key = val
-    sort_key = property(_get_sort_key, _set_sort_key)
+    sort_key = property(_get_sort_key, _set_sort_key) # pragma: no cover
  
-    def _get_header(self):
+    def _get_header(self): # pragma: no cover
         """Controls printing of table header with field names
 
         Arguments:
 
         header - print a header showing field names (True or False)"""
         return self._header
-    def _set_header(self, val):
+    def _set_header(self, val): # pragma: no cover
         self._validate_option("header", val)
         self._header = val
-    header = property(_get_header, _set_header)
+    header = property(_get_header, _set_header) # pragma: no cover
 
-    def _get_header_style(self):
+    def _get_header_style(self): # pragma: no cover
         """Controls stylisation applied to field names in header
 
         Arguments:
 
         header_style - stylisation to apply to field names in header ("cap", "title", "upper", "lower" or None)"""
         return self._header_style
-    def _set_header_style(self, val):
+    def _set_header_style(self, val): # pragma: no cover
         self._validate_header_style(val)
         self._header_style = val
-    header_style = property(_get_header_style, _set_header_style)
+    header_style = property(_get_header_style, _set_header_style) # pragma: no cover
 
-    def _get_border(self):
+    def _get_border(self): # pragma: no cover
         """Controls printing of border around table
 
         Arguments:
 
         border - print a border around the table (True or False)"""
         return self._border
-    def _set_border(self, val):
+    def _set_border(self, val): # pragma: no cover
         self._validate_option("border", val)
         self._border = val
-    border = property(_get_border, _set_border)
+    border = property(_get_border, _set_border) # pragma: no cover
 
-    def _get_hrules(self):
+    def _get_hrules(self): # pragma: no cover
         """Controls printing of horizontal rules after rows
 
         Arguments:
 
         hrules - horizontal rules style.  Allowed values: FRAME, ALL, HEADER, NONE"""
         return self._hrules
-    def _set_hrules(self, val):
+    def _set_hrules(self, val): # pragma: no cover
         self._validate_option("hrules", val)
         self._hrules = val
-    hrules = property(_get_hrules, _set_hrules)
+    hrules = property(_get_hrules, _set_hrules) # pragma: no cover
 
-    def _get_vrules(self):
+    def _get_vrules(self): # pragma: no cover
         """Controls printing of vertical rules between columns
 
         Arguments:
 
         vrules - vertical rules style.  Allowed values: FRAME, ALL, NONE"""
         return self._vrules
-    def _set_vrules(self, val):
+    def _set_vrules(self, val): # pragma: no cover
         self._validate_option("vrules", val)
         self._vrules = val
-    vrules = property(_get_vrules, _set_vrules)
+    vrules = property(_get_vrules, _set_vrules) # pragma: no cover
 
-    def _get_int_format(self):
+    def _get_int_format(self): # pragma: no cover
         """Controls formatting of integer data
         Arguments:
 
         int_format - integer format string"""
         return self._int_format
-    def _set_int_format(self, val):
+    def _set_int_format(self, val): # pragma: no cover
 #        self._validate_option("int_format", val)
         for field in self._field_names:
             self._int_format[field] = val
-    int_format = property(_get_int_format, _set_int_format)
+    int_format = property(_get_int_format, _set_int_format) # pragma: no cover
 
-    def _get_float_format(self):
+    def _get_float_format(self): # pragma: no cover
         """Controls formatting of floating point data
         Arguments:
 
         float_format - floating point format string"""
         return self._float_format
-    def _set_float_format(self, val):
+    def _set_float_format(self, val): # pragma: no cover
 #        self._validate_option("float_format", val)
         for field in self._field_names:
             self._float_format[field] = val
-    float_format = property(_get_float_format, _set_float_format)
+    float_format = property(_get_float_format, _set_float_format) # pragma: no cover
 
-    def _get_padding_width(self):
+    def _get_padding_width(self): # pragma: no cover
         """The number of empty spaces between a column's edge and its content
 
         Arguments:
 
         padding_width - number of spaces, must be a positive integer"""
         return self._padding_width
-    def _set_padding_width(self, val):
+    def _set_padding_width(self, val): # pragma: no cover
         self._validate_option("padding_width", val)
         self._padding_width = val
-    padding_width = property(_get_padding_width, _set_padding_width)
+    padding_width = property(_get_padding_width, _set_padding_width) # pragma: no cover
 
-    def _get_left_padding_width(self):
+    def _get_left_padding_width(self): # pragma: no cover
         """The number of empty spaces between a column's left edge and its content
 
         Arguments:
 
         left_padding - number of spaces, must be a positive integer"""
         return self._left_padding_width
-    def _set_left_padding_width(self, val):
+    def _set_left_padding_width(self, val): # pragma: no cover
         self._validate_option("left_padding_width", val)
         self._left_padding_width = val
-    left_padding_width = property(_get_left_padding_width, _set_left_padding_width)
+    left_padding_width = property(_get_left_padding_width, _set_left_padding_width) # pragma: no cover
 
-    def _get_right_padding_width(self):
+    def _get_right_padding_width(self): # pragma: no cover
         """The number of empty spaces between a column's right edge and its content
 
         Arguments:
 
         right_padding - number of spaces, must be a positive integer"""
         return self._right_padding_width
-    def _set_right_padding_width(self, val):
+    def _set_right_padding_width(self, val): # pragma: no cover
         self._validate_option("right_padding_width", val)
         self._right_padding_width = val
-    right_padding_width = property(_get_right_padding_width, _set_right_padding_width)
+    right_padding_width = property(_get_right_padding_width, _set_right_padding_width) # pragma: no cover
 
-    def _get_vertical_char(self):
+    def _get_vertical_char(self): # pragma: no cover
         """The charcter used when printing table borders to draw vertical lines
 
         Arguments:
 
         vertical_char - single character string used to draw vertical lines"""
         return self._vertical_char
-    def _set_vertical_char(self, val):
+    def _set_vertical_char(self, val): # pragma: no cover
         val = self._unicode(val)
         self._validate_option("vertical_char", val)
         self._vertical_char = val
-    vertical_char = property(_get_vertical_char, _set_vertical_char)
+    vertical_char = property(_get_vertical_char, _set_vertical_char) # pragma: no cover
 
-    def _get_horizontal_char(self):
+    def _get_horizontal_char(self): # pragma: no cover
         """The charcter used when printing table borders to draw horizontal lines
 
         Arguments:
 
         horizontal_char - single character string used to draw horizontal lines"""
         return self._horizontal_char
-    def _set_horizontal_char(self, val):
+    def _set_horizontal_char(self, val): # pragma: no cover
         val = self._unicode(val)
         self._validate_option("horizontal_char", val)
         self._horizontal_char = val
-    horizontal_char = property(_get_horizontal_char, _set_horizontal_char)
+    horizontal_char = property(_get_horizontal_char, _set_horizontal_char) # pragma: no cover
 
-    def _get_junction_char(self):
+    def _get_junction_char(self): # pragma: no cover
         """The charcter used when printing table borders to draw line junctions
 
         Arguments:
 
         junction_char - single character string used to draw line junctions"""
         return self._junction_char
-    def _set_junction_char(self, val):
+    def _set_junction_char(self, val): # pragma: no cover
         val = self._unicode(val)
         self._validate_option("vertical_char", val)
         self._junction_char = val
-    junction_char = property(_get_junction_char, _set_junction_char)
+    junction_char = property(_get_junction_char, _set_junction_char) # pragma: no cover
 
-    def _get_format(self):
+    def _get_format(self): # pragma: no cover
         """Controls whether or not HTML tables are formatted to match styling options
 
         Arguments:
 
         format - True or False"""
         return self._format
-    def _set_format(self, val):
+    def _set_format(self, val): # pragma: no cover
         self._validate_option("format", val)
         self._format = val
-    format = property(_get_format, _set_format)
+    format = property(_get_format, _set_format) # pragma: no cover
 
-    def _get_print_empty(self):
+    def _get_print_empty(self): # pragma: no cover
         """Controls whether or not empty tables produce a header and frame or just an empty string
 
         Arguments:
 
         print_empty - True or False"""
         return self._print_empty
-    def _set_print_empty(self, val):
+    def _set_print_empty(self, val): # pragma: no cover
         self._validate_option("print_empty", val)
         self._print_empty = val
-    print_empty = property(_get_print_empty, _set_print_empty)
+    print_empty = property(_get_print_empty, _set_print_empty) # pragma: no cover
 
-    def _get_attributes(self):
+    def _get_attributes(self): # pragma: no cover
         """A dictionary of HTML attribute name/value pairs to be included in the <table> tag when printing HTML
 
         Arguments:
 
         attributes - dictionary of attributes"""
         return self._attributes
-    def _set_attributes(self, val):
+    def _set_attributes(self, val): # pragma: no cover
         self._validate_option("attributes", val)
         self._attributes = val
-    attributes = property(_get_attributes, _set_attributes)
+    attributes = property(_get_attributes, _set_attributes) # pragma: no cover
 
     ##############################
     # OPTION MIXER               #
     ##############################
 
-    def _get_options(self, kwargs):
+    def _get_options(self, kwargs): # pragma: no cover
 
         options = {}
         for option in self._options:
@@ -744,7 +744,7 @@ class PrettyTable(object):
     # PRESET STYLE LOGIC         #
     ##############################
 
-    def set_style(self, style):
+    def set_style(self, style): # pragma: no cover
 
         if style == DEFAULT:
             self._set_default_style()
@@ -757,7 +757,7 @@ class PrettyTable(object):
         else:
             raise Exception("Invalid pre-set style!")
 
-    def _set_default_style(self):
+    def _set_default_style(self): # pragma: no cover
 
         self.header = True
         self.border = True
@@ -770,7 +770,7 @@ class PrettyTable(object):
         self.horizontal_char = "-"
         self.junction_char = "+"
 
-    def _set_msword_style(self):
+    def _set_msword_style(self): # pragma: no cover
 
         self.header = True
         self.border = True
@@ -780,7 +780,7 @@ class PrettyTable(object):
         self.right_padding_width = 1
         self.vertical_char = "|"
 
-    def _set_columns_style(self):
+    def _set_columns_style(self): # pragma: no cover
 
         self.header = True
         self.border = False
@@ -788,7 +788,7 @@ class PrettyTable(object):
         self.left_padding_width = 0
         self.right_padding_width = 8
 
-    def _set_random_style(self):
+    def _set_random_style(self): # pragma: no cover
 
         # Just for fun!
         self.header = random.choice((True, False))
@@ -805,7 +805,7 @@ class PrettyTable(object):
     # DATA INPUT METHODS         #
     ##############################
 
-    def add_row(self, row):
+    def add_row(self, row): # pragma: no cover
 
         """Add a row to the table
 
@@ -820,7 +820,7 @@ class PrettyTable(object):
             self.field_names = [("Field %d" % (n+1)) for n in range(0,len(row))]
         self._rows.append(list(row))
 
-    def del_row(self, row_index):
+    def del_row(self, row_index): # pragma: no cover
 
         """Delete a row to the table
 
@@ -832,7 +832,7 @@ class PrettyTable(object):
             raise Exception("Cant delete row at index %d, table only has %d rows!" % (row_index, len(self._rows)))
         del self._rows[row_index]
 
-    def add_column(self, fieldname, column, align="c", valign="t"):
+    def add_column(self, fieldname, column, align="c", valign="t"): # pragma: no cover
 
         """Add a column to the table.
 
@@ -857,13 +857,13 @@ class PrettyTable(object):
         else:
             raise Exception("Column length %d does not match number of rows %d!" % (len(column), len(self._rows)))
 
-    def clear_rows(self):
+    def clear_rows(self): # pragma: no cover
 
         """Delete all rows from the table but keep the current field names"""
 
         self._rows = []
 
-    def clear(self):
+    def clear(self): # pragma: no cover
 
         """Delete all rows and field names from the table, maintaining nothing but styling options"""
 
@@ -875,21 +875,21 @@ class PrettyTable(object):
     # MISC PUBLIC METHODS        #
     ##############################
 
-    def copy(self):
+    def copy(self): # pragma: no cover
         return copy.deepcopy(self)
 
     ##############################
     # MISC PRIVATE METHODS       #
     ##############################
 
-    def _format_value(self, field, value):
+    def _format_value(self, field, value): # pragma: no cover
         if isinstance(value, int) and field in self._int_format:
             value = self._unicode(("%%%sd" % self._int_format[field]) % value)
         elif isinstance(value, float) and field in self._float_format:
             value = self._unicode(("%%%sf" % self._float_format[field]) % value)
         return self._unicode(value)
 
-    def _compute_widths(self, rows, options):
+    def _compute_widths(self, rows, options): # pragma: no cover
         if options["header"]:
             widths = [_get_size(field)[0] for field in self._field_names]
         else:
@@ -903,7 +903,7 @@ class PrettyTable(object):
                     widths[index] = max(widths[index], _get_size(value)[0])
         self._widths = widths
 
-    def _get_padding_widths(self, options):
+    def _get_padding_widths(self, options): # pragma: no cover
 
         if options["left_padding_width"] is not None:
             lpad = options["left_padding_width"]
@@ -915,7 +915,7 @@ class PrettyTable(object):
             rpad = options["padding_width"]
         return lpad, rpad
 
-    def _get_rows(self, options):
+    def _get_rows(self, options): # pragma: no cover
         """Return only those data rows that should be printed, based on slicing and sorting.
 
         Arguments:
@@ -935,17 +935,17 @@ class PrettyTable(object):
             rows = [row[1:] for row in rows]
         return rows
         
-    def _format_row(self, row, options):
+    def _format_row(self, row, options): # pragma: no cover
         return [self._format_value(field, value) for (field, value) in zip(self._field_names, row)]
 
-    def _format_rows(self, rows, options):
+    def _format_rows(self, rows, options): # pragma: no cover
         return [self._format_row(row, options) for row in rows]
  
     ##############################
     # PLAIN TEXT STRING METHODS  #
     ##############################
 
-    def get_string(self, **kwargs):
+    def get_string(self, **kwargs): # pragma: no cover
 
         """Return string representation of table in current state.
 
@@ -1006,7 +1006,7 @@ class PrettyTable(object):
         
         return self._unicode("\n").join(lines)
 
-    def _stringify_hrule(self, options):
+    def _stringify_hrule(self, options): # pragma: no cover
 
         if not options["border"]:
             return ""
@@ -1032,7 +1032,7 @@ class PrettyTable(object):
             bits.append(options["junction_char"])
         return "".join(bits)
 
-    def _stringify_header(self, options):
+    def _stringify_header(self, options): # pragma: no cover
 
         bits = []
         lpad, rpad = self._get_padding_widths(options)
@@ -1099,6 +1099,7 @@ class PrettyTable(object):
             if h > row_height:
                 row_height = h
 
+
         bits = []
         lpad, rpad = self._get_padding_widths(options)
         for y in range(0, row_height):
@@ -1155,7 +1156,7 @@ class PrettyTable(object):
     # HTML STRING METHODS        #
     ##############################
 
-    def get_html_string(self, **kwargs):
+    def get_html_string(self, **kwargs): # pragma: no cover
 
         """Return string representation of HTML formatted version of table in current state.
 
@@ -1187,7 +1188,7 @@ class PrettyTable(object):
 
         return string
 
-    def _get_simple_html_string(self, options):
+    def _get_simple_html_string(self, options): # pragma: no cover
 
         lines = []
         if options["xhtml"]:
@@ -1227,7 +1228,7 @@ class PrettyTable(object):
 
         return self._unicode("\n").join(lines)
 
-    def _get_formatted_html_string(self, options):
+    def _get_formatted_html_string(self, options): # pragma: no cover
 
         lines = []
         lpad, rpad = self._get_padding_widths(options)
@@ -1291,7 +1292,7 @@ class PrettyTable(object):
 # UNICODE WIDTH FUNCTIONS    #
 ##############################
 
-def _char_block_width(char):
+def _char_block_width(char): # pragma: no cover
     # Basic Latin, which is probably the most common case
     #if char in xrange(0x0021, 0x007e):
     #if char >= 0x0021 and char <= 0x007e:
@@ -1324,7 +1325,7 @@ def _char_block_width(char):
     # Take a guess
     return 1
 
-def _str_block_width(val):
+def _str_block_width(val): # pragma: no cover
 
     return sum(itermap(_char_block_width, itermap(ord, _re.sub("", val))))
 
@@ -1332,7 +1333,7 @@ def _str_block_width(val):
 # TABLE FACTORIES            #
 ##############################
 
-def from_csv(fp, field_names = None, **kwargs):
+def from_csv(fp, field_names = None, **kwargs): # pragma: no cover
 
     dialect = csv.Sniffer().sniff(fp.read(1024))
     fp.seek(0)
@@ -1352,7 +1353,7 @@ def from_csv(fp, field_names = None, **kwargs):
 
     return table
 
-def from_db_cursor(cursor, **kwargs):
+def from_db_cursor(cursor, **kwargs): # pragma: no cover
 
     if cursor.description:
         table = PrettyTable(**kwargs)
@@ -1361,7 +1362,7 @@ def from_db_cursor(cursor, **kwargs):
             table.add_row(row)
         return table
 
-class TableHandler(HTMLParser):
+class TableHandler(HTMLParser): # pragma: no cover
 
     def __init__(self, **kwargs):
         HTMLParser.__init__(self)
@@ -1427,7 +1428,7 @@ class TableHandler(HTMLParser):
                 if fields[i] == fields[j]:
                     fields[j] += "'"
 
-def from_html(html_code, **kwargs):
+def from_html(html_code, **kwargs): # pragma: no cover
     """
     Generates a list of PrettyTables from a string of HTML code. Each <table> in
     the HTML becomes one PrettyTable object.
@@ -1437,7 +1438,7 @@ def from_html(html_code, **kwargs):
     parser.feed(html_code)
     return parser.tables
 
-def from_html_one(html_code, **kwargs):
+def from_html_one(html_code, **kwargs): # pragma: no cover
     """
     Generates a PrettyTables from a string of HTML code which contains only a
     single <table>
@@ -1454,7 +1455,7 @@ def from_html_one(html_code, **kwargs):
 # MAIN (TEST FUNCTION)       #
 ##############################
 
-def main():
+def main(): # pragma: no cover
 
     x = PrettyTable(["City name", "Area", "Population", "Annual Rainfall"])
     x.sortby = "Population"
@@ -1471,5 +1472,5 @@ def main():
     x.add_row(["Perth", 5386, 1554769, 869.4])
     print(x)
     
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     main()
