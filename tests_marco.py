@@ -50,6 +50,7 @@ class ValidationTests(unittest.TestCase):
             self.pt._validate_valign('t')
             self.pt._validate_valign('m')
             self.pt._validate_valign('b')
+            self.pt._validate_valign(None)
         except Exception:
             self.fail('_validate_valign raised an Exception for valid input')
 
