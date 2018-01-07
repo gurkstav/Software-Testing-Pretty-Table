@@ -14,20 +14,11 @@ class WhiteBoxTests(unittest.TestCase):
         # self.pt = prettytable.PrettyTable()
         self.pt = prettytable.PrettyTable(["City name", "Area", "Population", "Annual Rainfall"])
         self.pt.sortby = "Population"
-        # self.pt.reversesort = True
-        # x.int_format["Area"] = "04d"
-        # x.float_format = "6.1f"
         self.pt.align["City name"] = "l" # Left align city names
-        # self.pt.add_row(["Adelaide", 1295, 1158259, 600.5])
-        # self.pt.add_row(["Adelaide Long Name", 1295, 1158259, 600.5])
-        # self.pt.add_row(["Brisbane", 5905, 1857594, 1146.4])
-        # self.pt.add_row(["Darwin", 112, 120900, 1714.7])
-        # self.pt.add_row(["Hobart", 1357, 205556, 619.5])
-        # self.pt.add_row(["Sydney", 2058, 4336374, 1214.8])
-        # self.pt.add_row(["Melbourne", 1566, 3806092, 646.9])
-        # self.pt.add_row(["Perth", 5386, 1554769, 869.4])
 
         self.applyOptions()
+
+
 
     def test_stringify_row_normal(self):
         print '\ntest_stringify_row_normal\n'
@@ -42,6 +33,39 @@ class WhiteBoxTests(unittest.TestCase):
         self.assertTrue('1295' in row_string)
         self.assertTrue('1158259' in row_string)
         self.assertTrue('600.5' in row_string)
+        self.assertEqual(row_string, expected_row_string)
+
+    def test_stringify_row_short(self):
+        print '\ntest_stringify_row_short\n'
+        self.pt = prettytable.PrettyTable(["City name"])
+        self.pt.align["City name"] = "l" # Left align city names
+        self.pt.add_row(["Adelaide"])
+        self.applyOptions()
+        expected_row_string = '| Adelaide  |'
+
+        row_string = self.pt._stringify_row(self.formatted_rows[0], self.options)
+        print row_string
+
+        self.assertTrue('Adelaide' in row_string)
+        self.assertTrue('1295' not in row_string)
+        self.assertTrue('1158259' not in row_string)
+        self.assertTrue('600.5' not in row_string)
+        self.assertEqual(row_string, expected_row_string)
+
+    def test_stringify_row_empty(self):
+        print '\ntest_stringify_row_empty\n'
+        self.pt = prettytable.PrettyTable([])
+        self.pt.add_row([])
+        self.applyOptions()
+        expected_row_string = ''
+
+        row_string = self.pt._stringify_row(self.formatted_rows[0], self.options)
+        print row_string
+
+        self.assertTrue('Adelaide' not in row_string)
+        self.assertTrue('1295' not in row_string)
+        self.assertTrue('1158259' not in row_string)
+        self.assertTrue('600.5' not in row_string)
         self.assertEqual(row_string, expected_row_string)
 
     def test_stringify_row_long_cell_limited_width(self):
