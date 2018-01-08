@@ -35,6 +35,26 @@ class WhiteBoxTests(unittest.TestCase):
         self.assertTrue('600.5' in row_string)
         self.assertEqual(row_string, expected_row_string)
 
+    def test_stringify_row_multiline_entry(self):
+        print '\ntest_stringify_row_multiline_entry\n'
+        self.pt.add_row(["Adelaide\na city in\nSouthern Australia", 1295, 1158259, 600.5])
+        self.applyOptions()
+        expected_row_string = '\
+| Adelaide           | 1295 |  1158259   |      600.5      |\n\
+| a city in          |      |            |                 |\n\
+| Southern Australia |      |            |                 |'
+
+        row_string = self.pt._stringify_row(self.formatted_rows[0], self.options)
+        print row_string
+
+        self.assertTrue('Adelaide' in row_string)
+        self.assertTrue('a city in' in row_string)
+        self.assertTrue('Southern Australia' in row_string)
+        self.assertTrue('1295' in row_string)
+        self.assertTrue('1158259' in row_string)
+        self.assertTrue('600.5' in row_string)
+        self.assertEqual(row_string, expected_row_string)
+
     def test_stringify_row_short(self):
         print '\ntest_stringify_row_short\n'
         self.pt = prettytable.PrettyTable(["City name"])
